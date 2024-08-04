@@ -1,7 +1,7 @@
 const express = require('express');
 const handlebars = require('express-handlebars');
 const path = require('path');
-const db = require('./config/db/index');
+// const db = require('./config/db/index');
 const route = require('./resources/router/index.route');
 
 const port = 3000;
@@ -27,7 +27,7 @@ app.use(
     }),
 );
 
-db.connect();
+// db.connect();
 route(app);
 
 app.listen(port, () => {
