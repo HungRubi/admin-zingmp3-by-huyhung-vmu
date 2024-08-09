@@ -3,8 +3,10 @@ const Schema = mongoose.Schema;
 
 const albums = new Schema(
     {
-        name: String,
+        name: { type: String, unique: true },
+        description: String,
         img: String,
+        slug: String,
     },
     {
         timestamps: true,

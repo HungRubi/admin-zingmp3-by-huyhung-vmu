@@ -3,26 +3,26 @@
     <i class="bi bi-chevron-right"></i>
     Songs
     <i class="bi bi-chevron-right"></i>
-    Create song
+    Update song
   </span>
   <h2 class="name-page">Songs</h2>
 </header>
 <div class="wrapper-content-page">
     <div class="mt-4">
-        <h2>Create song</h2>
-        <form action="/songs/store" method="post">
+        <h2>Update song</h2>
+        <form action="/songs/{{song._id }}?_method=PUT" method="POST">
             <div class="form-group mt-3">
                 <label>Name</label>
-                <input type="text" class="form-control mt-2" name="name"  placeholder="Name...">    
+                <input type="text" class="form-control mt-2" value="{{song.name}}" name="name">    
             </div>
             <div class="form-group mt-3">
                 <label>Image</label>
-                <input type="text" class="form-control mt-2" name="img" placeholder="Link...">    
+                <input type="text" class="form-control mt-2" value="{{song.img}}" name="img">    
             </div>
             <div class="form-group mt-3">
                 <label>Singers</label>
                 <select class="form-select" aria-label="Default select example" name="singer">
-                    <option selected>Select Singer</option>
+                    <option selected>{{song.singer}}</option>
                     {{#each singers}}
                         <option value="{{this.stagename}}">{{this.stagename}}</option>
                     {{/each }}
@@ -31,13 +31,13 @@
             <div class="form-group mt-3">
                 <label>Albums</label>
                 <select class="form-select" aria-label="Default select example" name="album">
-                    <option selected>Select Albums</option>
+                    <option selected> {{song.album}}</option>
                     {{#each albums}}
                         <option value="{{this.name}}">{{this.name}}</option>
                     {{/each }}
                 </select>    
             </div>
-            <button type="submit" class="mt-3 btn btn-primary">Add new song</button>
+            <button type="submit" class="mt-3 btn btn-primary">Update song</button>
         </form>
     </div>
 </div>
