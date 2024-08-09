@@ -49,8 +49,8 @@
               <td>{{this.description}}</td>
               <td><img src="{{this.img}}" alt="" srcset=""></td>
               <td>
-                <a href="/songs/{{this._id}}/edit"><i class="bi bi-pencil-square"></i></a>
-                <a href="/songs/{{this._id}}/delete" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#delete-song-model"><i class="bi bi-trash"></i></a>
+                <a href="/albums/{{this._id}}/edit"><i class="bi bi-pencil-square"></i></a>
+                <a href="/albums/{{this._id}}/delete" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#delete-album-model"><i class="bi bi-trash"></i></a>
               </td>
           </tr>
       {{/each}}
@@ -58,5 +58,43 @@
   </table>
 </div>
 
+<form method="POST" name="delete-album-form"></form>
+
+<div class="modal fade" id="delete-album-model" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Member</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you want to delete this member!
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="btn-delete">Delete</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  const deleteSong = document.getElementById('delete-album-model')
+  const btnDelete = document.getElementById('btn-delete');
+  const deleteForm = document.forms['delete-album-form'];
+
+  var songId;
+  if (deleteSong) {
+    deleteSong.addEventListener('show.bs.modal', event => {
+      const button = event.relatedTarget
+      songId = button.getAttribute('data-id')
+    })
+  }
+  if(btnDelete){
+    btnDelete.addEventListener('click', () => {
+      deleteForm.action = '/albums/' + songId + '?_method=DELETE';
+      deleteForm.submit();
+    })
+  }
+</script>
 
 
