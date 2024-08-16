@@ -1,4 +1,5 @@
 const Albums = require('../model/albums.model');
+const Topic = require('../model/topic.model');
 const { mutipleMongooseoObjectT } = require('../../util/mongoose');
 const { createSlug } = require('../../util/slug');
 const { mongooseToObject } = require('../../util/mongoose');
@@ -16,15 +17,21 @@ class AlbumsController {
 
     /* [GET] /albums/ceate */
     createAlbums(req, res, next) {
-        res.render('albums/createAlbums');
+        Topic.find({})
+            .then((topic) => {
+                res.render('albums/createAlbums', {
+                    topic: mutipleMongooseoObjectT(topic),
+                });
+            })
+            .catch(next);
     }
 
     /* [POST] /albums/store */
     store = async (req, res, next) => {
         try {
-            const { name, img, description } = req.body;
+            const { name, topic, img, description } = req.body;
             var slug = createSlug(name);
-            const album = new Albums({ name, img, description, slug });
+            const album = new Albums({ name, img, topic, description, slug });
             await album.save();
             res.redirect('/albums');
         } catch (error) {
@@ -34,10 +41,11 @@ class AlbumsController {
 
     /* [GET] /albums/:id/edit */
     editAlbums(req, res, next) {
-        Albums.findById(req.params.id)
-            .then((album) => {
+        Promise.all([Albums.findById(req.params.id), Topic.find({})])
+            .then(([album, topic]) => {
                 res.render('albums/updateAlbums', {
                     album: mongooseToObject(album),
+                    topic: mutipleMongooseoObjectT(topic),
                 });
             })
             .catch(next);

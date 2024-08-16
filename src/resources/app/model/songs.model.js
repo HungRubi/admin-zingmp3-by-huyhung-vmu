@@ -6,6 +6,7 @@ const songs = new Schema(
         img: String,
         singer: String,
         album: String,
+        national: String,
         slug: String,
     },
     {

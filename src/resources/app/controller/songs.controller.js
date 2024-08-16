@@ -32,11 +32,12 @@ class SongsController {
     /* [POST] /songs/store */
     store = async (req, res, next) => {
         try {
-            const { name, img, singer, album } = req.body;
+            const { name, img, national, singer, album } = req.body;
             let slug = createSlug(name);
             const song = new Songs({
                 name,
                 img,
+                national,
                 singer,
                 album,
                 slug,
@@ -55,7 +56,6 @@ class SongsController {
             Albums.find({}),
             Songs.findById(req.params.id),
         ])
-
             .then(([singers, albums, song]) => {
                 res.render('songs/updateSongs', {
                     song: mongooseToObject(song),

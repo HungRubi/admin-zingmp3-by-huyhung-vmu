@@ -20,6 +20,15 @@
                 <input type="text" class="form-control mt-2" value="{{song.img}}" name="img">    
             </div>
             <div class="form-group mt-3">
+                <label>National</label>
+                <select class="form-select" aria-label="Default select example" name="national">
+                    <option selected>{{song.national}}</option>
+                    <option value="Việt Nam">Việt Nam</option>
+                    <option value="Quốc Tế">Quốc Tế</option>
+                    <option value="Tàu Khựa">Tàu Khựa</option>
+                </select>    
+            </div>
+            <div class="form-group mt-3">
                 <label>Singers</label>
                 <select class="form-select" aria-label="Default select example" name="singer">
                     <option selected>{{song.singer}}</option>

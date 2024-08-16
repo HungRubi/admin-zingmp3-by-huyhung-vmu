@@ -35,8 +35,9 @@
     <thead class="thead-dark">
       <tr>
         <th scope="col">#</th>
-        <th scope="col">Name Songs</th>
         <th scope="col">Image</th>
+        <th scope="col">Name Songs</th>
+        <th scope="col">National</th>
         <th scope="col">Singer</th>
         <th scope="col">Album</th>
         <th scope="col">Operation</th>
@@ -48,6 +49,7 @@
             <th scope="row">{{sum @index 1}}</th>
             <td><img src="{{this.img}}" alt="" srcset=""></td>
             <td>{{this.name}}</td>
+            <td>{{this.national}}</td>
             <td>{{this.singer}}</td>
             <td>{{this.album}}</td>
             <td>

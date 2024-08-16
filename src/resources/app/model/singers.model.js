@@ -5,8 +5,10 @@ const singers = new Schema(
     {
         name: String,
         description: String,
+        img: String,
         birth: String,
         stagename: String,
+        slug: String,
     },
     {
         timestamps: true,

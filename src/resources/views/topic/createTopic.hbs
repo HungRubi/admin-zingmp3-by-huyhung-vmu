@@ -1,0 +1,25 @@
+<header class="header-content">
+  <span class="path-title">Dashboard
+    <i class="bi bi-chevron-right"></i>
+    Topic
+    <i class="bi bi-chevron-right"></i>
+    Create topic
+  </span>
+  <h2 class="name-page">Topic</h2>
+</header>
+<div class="wrapper-content-page">
+    <div class="mt-4">
+        <h2>Create topic</h2>
+        <form action="/topic/store" method="POST">
+            <div class="form-group mt-3">
+                <label>Name</label>
+                <input type="text" class="form-control mt-2" name="name" placeholder="Name topic...">    
+            </div>
+            <div class="form-group mt-3">
+                <label>Titile</label>
+                <input type="text" class="form-control mt-2" name="title" placeholder="Title topic...">    
+            </div>
+            <button type="submit" class="mt-3 btn btn-primary">Create topic</button>
+        </form>
+    </div>
+</div>

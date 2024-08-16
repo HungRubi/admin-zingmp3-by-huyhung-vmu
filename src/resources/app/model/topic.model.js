@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const albums = new Schema(
+const topic = new Schema(
     {
         name: { type: String, unique: true },
-        description: String,
-        img: String,
-        topic: String,
+        title: String,
         slug: String,
     },
     {
@@ -14,4 +12,4 @@ const albums = new Schema(
     },
 );
 
-module.exports = mongoose.model('albums', albums);
+module.exports = mongoose.model('topic', topic);
