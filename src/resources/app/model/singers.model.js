@@ -6,6 +6,7 @@ const singers = new Schema(
         name: String,
         description: String,
         img: String,
+        imginfor: String,
         birth: String,
         stagename: String,
         slug: String,

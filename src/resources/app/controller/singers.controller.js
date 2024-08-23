@@ -22,12 +22,14 @@ class SingerController {
     /* [POST] /singers/store */
     store = async (req, res, next) => {
         try {
-            const { name, description, img, birth, stagename } = req.body;
+            const { name, description, img, imginfor, birth, stagename } =
+                req.body;
             let slug = createSlug(stagename);
             const singer = new Singers({
                 name,
                 description,
                 img,
+                imginfor,
                 birth,
                 stagename,
                 slug,
