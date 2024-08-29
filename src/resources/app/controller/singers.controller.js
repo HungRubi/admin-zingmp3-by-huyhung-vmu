@@ -2,6 +2,7 @@ const Singers = require('../model/singers.model');
 const { mutipleMongooseoObjectT } = require('../../util/mongoose');
 const { mongooseToObject } = require('../../util/mongoose');
 const { createSlug } = require('../../util/slug');
+const { response } = require('express');
 class SingerController {
     /* [GET] /singers */
     index(req, res, next) {
