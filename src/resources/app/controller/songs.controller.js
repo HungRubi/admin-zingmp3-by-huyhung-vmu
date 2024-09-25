@@ -34,6 +34,7 @@ class SongsController {
         try {
             const { name, img, national, music, singer, album } = req.body;
             let slug = createSlug(name);
+            let albumSlug = createSlug(album);
             const song = new Songs({
                 name,
                 img,
@@ -41,6 +42,7 @@ class SongsController {
                 singer,
                 music,
                 album,
+                albumSlug,
                 slug,
             });
             await song.save();

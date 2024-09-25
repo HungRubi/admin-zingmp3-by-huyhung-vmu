@@ -56,8 +56,28 @@
             <td>{{this.phone}}</td>
             <td>{{this.address}}</td>
             <td>
-              <a href="/users/{{this._id}}/edit"><i class="bi bi-pencil-square"></i></a>
-              <a href="/users/{{this._id}}/delete" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#delete-user-model"><i class="bi bi-trash"></i></a>
+              <div class="detail btn-circle btn-tab-js">
+                <i class="bi bi-three-dots"></i>
+                <div class="container_detail tab-js hidden">
+                  <ul>
+                    <li>
+                      <a href="/users/{{this._id}}/edit">
+                        <i class="bi bi-pencil-square"></i>
+                        <span>Sửa</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/users/{{this._id}}/delete" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#delete-user-model">
+                        <i class="bi bi-trash"></i>
+                        <span>Xóa</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/users/{{this._id}}"><i class="bi bi-journal-text"></i><span>Xem chi tiết</span></a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </td>
         </tr>
       {{else}}

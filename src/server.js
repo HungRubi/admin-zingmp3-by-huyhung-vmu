@@ -4,6 +4,7 @@ const path = require('path');
 const db = require('./config/db/index');
 const route = require('./resources/router/index.route');
 const methodOverride = require('method-override');
+const cors = require('cors');
 
 const port = 3000;
 const app = express();
@@ -31,6 +32,7 @@ app.use(
     }),
 );
 
+app.use(cors());
 db.connect();
 route(app);
 

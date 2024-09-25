@@ -56,6 +56,18 @@ class UsersController {
             .then(() => res.redirect('back'))
             .catch(next);
     }
+    /* [GET] users/:id */
+    userDetail(req, res, next) {
+        Users.findById(req.params.id)
+            .then((user) => {
+                res.render('users/detail', {
+                    user: mongooseToObject(user),
+                });
+            })
+            .catch((err) => {
+                next(err);
+            });
+    }
 }
 
 module.exports = new UsersController();

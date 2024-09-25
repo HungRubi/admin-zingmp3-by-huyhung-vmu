@@ -1,6 +1,5 @@
 const btnToggle = document.querySelectorAll('.btn-tab-js');
 const tabToggle = document.querySelectorAll('.tab-js');
-
 if (btnToggle) {
     btnToggle.forEach((btn, index) => {
         btn.addEventListener('click', () => {

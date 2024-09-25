@@ -9,7 +9,9 @@
   --bg-tab-active: #c3d6f144;
   --bg-circle: rgba(0, 0, 0, 0.041);
   --border-sidebar: rgba(0, 0, 0, 0.116);
-  --text-color: #3e465b; }
+  --text-color: #3e465b;
+  --box-shadow-queue: 0 1px 0 rgba(0, 0, 0, 0.158), 0 1px 6px rgba(0, 0, 0, 0.116),
+                        inset 0 1px 1px rgba(25, 255, 255, 0.05); }
 
 body {
   height: 100vh;
@@ -26,7 +28,8 @@ body {
   justify-content: center;
   background-color: var(--bg-circle);
   border-radius: 50%;
-  cursor: pointer; }
+  cursor: pointer;
+  z-index: 1; }
   .btn-circle i {
     font-size: 17px;
     line-height: 66%; }
@@ -78,20 +81,12 @@ td {
   text-align: left;
   line-height: 40px;
   text-overflow: ellipsis;
-  overflow: hidden;
   text-wrap: nowrap; }
   td img {
     width: 40px;
     height: 40px;
     object-fit: cover;
     border-radius: 5px; }
-  td i {
-    margin-right: 20px;
-    font-size: 20px;
-    cursor: pointer; }
-  td i:hover {
-    color: blue;
-    transition: 0.3s linear; }
 
 .search-header {
   width: 30%;
@@ -171,6 +166,7 @@ td {
       .header-bar .level-right .user-avatar .content-user {
         z-index: 999;
         top: 50px;
+        background-color: white !important;
         position: absolute;
         width: 300px;
         right: 0;
@@ -255,7 +251,8 @@ td {
 
 .main-page {
   width: 100%;
-  overflow-y: scroll; }
+  overflow-y: scroll;
+  background-color: var(--bs-tertiary-bg-rgb); }
 
 .main-page::-webkit-scrollbar {
   width: 7px;
@@ -364,9 +361,37 @@ td {
 .wrapper-content-page {
   width: 100%;
   padding: 45px;
-  background: white;
+  background: #fff;
   border-top: 1px solid var(--border-sidebar);
   border-bottom: 1px solid var(--border-sidebar);
   margin-bottom: 20px; }
 
 /* CONTENT MAIN */
+.detail {
+  position: relative; }
+  .detail .container_detail {
+    position: absolute;
+    width: 130px;
+    height: auto;
+    border-radius: 8px;
+    bottom: 0;
+    right: 0;
+    margin-right: 35px;
+    margin-bottom: 25px;
+    background-color: #fff;
+    box-shadow: var(--box-shadow-queue);
+    z-index: 999; }
+    .detail .container_detail ul {
+      padding: 3px 0 !important;
+      list-style-type: none; }
+      .detail .container_detail ul li {
+        padding: 0 6px !important;
+        border-radius: 8px; }
+        .detail .container_detail ul li a {
+          width: 100%; }
+          .detail .container_detail ul li a span {
+            margin-left: 7px;
+            font-size: 13px;
+            font-weight: 400; }
+      .detail .container_detail ul li:hover {
+        background-color: rgba(158, 152, 152, 0.274); }

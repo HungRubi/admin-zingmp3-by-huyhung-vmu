@@ -11,6 +11,13 @@ const users = new Schema(
         phone: { type: String, unique: true },
         quyenhan: String,
         email: { type: String, unique: true },
+        playlists: [{ type: Schema.Types.ObjectId, ref: 'Playlist' }],
+        favoriteSongs: [{ type: Schema.Types.ObjectId, ref: 'Song' }],
+        favoriteAlbums: [{ type: Schema.Types.ObjectId, ref: 'Album' }],
+        recentlyPlayed: [{ type: Schema.Types.ObjectId, ref: 'Song' }],
+        lastLogin: { type: Date },
+        loginHistory: [{ type: Date }],
+        subscriptionPlan: { type: String, default: 'free' },
     },
     {
         timestamps: true,

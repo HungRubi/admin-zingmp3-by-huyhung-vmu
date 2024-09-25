@@ -8,6 +8,7 @@ const songs = new Schema(
         album: String,
         national: String,
         music: String,
+        albumSlug: String,
         slug: String,
     },
     {
