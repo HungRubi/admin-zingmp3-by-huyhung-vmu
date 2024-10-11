@@ -6,6 +6,7 @@ const SingerApi = require('../app/api/singers.api');
 
 /* Api */
 route.get('/api/randomsingers', SingerApi.getRandomSinger);
+route.get('/api/getsinger/:slug', SingerApi.getSingerSlug);
 
 /* Route */
 route.get('/create', singersController.createSinger);

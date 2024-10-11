@@ -9,6 +9,15 @@ class SingerApi {
             })
             .catch(next);
     }
+
+    /* [GET] /singers/api/getsinger/:slug */
+    getSingerSlug(req, res, next){
+        Singer.findOne({slug: req.params.slug})
+        .then(singer => {
+            res.json(singer)
+        })
+        .catch(next);
+    }
 }
 
 module.exports = new SingerApi();
