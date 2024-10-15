@@ -6,6 +6,7 @@ const mv = new Schema(
         name: { type: String, unique: true },
         singer: String,
         img: String,
+        video: String,
         slug: String,
     },
     {

@@ -31,7 +31,7 @@ class MVcontroller {
         try {
             const { name, singer, img } = req.body;
             var slug = createSlug(name);
-            const mv = new MVs({ name, img, singer, slug });
+            const mv = new MVs({ name, img, video, singer, slug });
             await mv.save();
             res.redirect('/mv');
         } catch (error) {

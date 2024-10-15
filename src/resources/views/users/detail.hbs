@@ -15,30 +15,93 @@
                 <label>Name</label>
                 <input type="text" class="form-control mt-2" value="{{user.username}}" name="username"  >    
             </div>
+
             <div class="form-group mt-3">
                 <label>Password</label>
                 <input type="text" class="form-control mt-2" value="{{user.password}}" name="password" >    
             </div>
+
             <div class="form-group mt-3">
                 <label>Fullname</label>
                 <input type="text" class="form-control mt-2" value="{{user.fullname}}" name="fullname" >    
             </div>
+
             <div class="form-group mt-3">
                 <label>Image</label>
                 <input type="text" class="form-control mt-2" value="{{user.img}}" name="img" >
             </div>
+
             <div class="form-group mt-3">
                 <label>Email</label>
                 <input type="email" class="form-control mt-2" value="{{user.email}}" name="email" >    
             </div>
+
             <div class="form-group mt-3">
                 <label>Address</label>
                 <input type="text" class="form-control mt-2" value="{{user.address}}" name="address" >    
             </div>
+
             <div class="form-group mt-3">
                 <label>Phone</label>
                 <input type="text" class="form-control mt-2" value="{{user.phone}}" name="phone" >    
             </div>
+
+            <div class="form-group mt-3">
+                <label>Play list</label>
+                <input type="text" class="form-control mt-2" value="{{user.playlists}}" name="playlists" >    
+            </div>
+
+            <div class="form-group mt-3">
+                <label>List Songs</label>
+                <select class="form-select" class="list-selection">
+                    <option selected>Select Songs</option>
+                    {{#each songs}}
+                        <option value="{{this._id}}">{{this.name}}</option>
+                    {{/each }}
+                </select>    
+            </div>
+            <button class="mt-3 btn btn-primary btn-add-list-selection">Thêm bài hát</button>
+            <div class="form-group mt-3">
+                <label>My Songs</label>
+                <input type="text" class="form-control" value="{{user.favoriteSongs}}" name="favoriteSongs" class="result-selection">
+            </div>
+
+
+            <div class="form-group mt-3">
+                <label>List Songs</label>
+                <select class="form-select" class="list-selection">
+                    <option selected>Select Songs</option>
+                    {{#each albums}}
+                        <option value="{{this._id}}">{{this.name}}</option>
+                    {{/each }}
+                </select>    
+            </div>
+            <button class="mt-3 btn btn-primary btn-add-list-selection">Thêm albums</button>
+            <div class="form-group mt-3">
+                <label>Favorite Albums</label>
+                <input type="text" class="form-control mt-2" value="{{user.favoriteAlbums}}" name="favoriteAlbums" class="result-selection">    
+            </div>
+
+            <div class="form-group mt-3">
+                <label>Recently Played</label>
+                <input type="text" class="form-control mt-2" value="{{user.recentlyPlayed}}" name="recentlyPlayed">    
+            </div>
+
+            <div class="form-group mt-3">
+                <label>Last Login</label>
+                <input type="text" class="form-control mt-2" value="{{user.lastLogin}}" name="lastLogin" >    
+            </div>
+
+            <div class="form-group mt-3">
+                <label>Last History</label>
+                <input type="text" class="form-control mt-2" value="{{user.loginHistory}}" name="loginHistory" >    
+            </div>
+
+            <div class="form-group mt-3">
+                <label>Subscription Plan</label>
+                <input type="text" class="form-control mt-2" value="{{user.subscriptionPlan}}" name="subscriptionPlan" >    
+            </div>
+
             <div class="form-group mt-3">
                 <label>Authorization</label>
                 <select class="form-select" aria-label="Default select example" name="singer">

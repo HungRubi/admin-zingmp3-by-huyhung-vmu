@@ -1,4 +1,6 @@
 const Users = require('../model/user.model');
+const Songs = require('../model/songs.model');
+const Albums = require('../model/albums.model');
 const { mutipleMongooseoObjectT } = require('../../util/mongoose');
 const { mongooseToObject } = require('../../util/mongoose');
 class UsersController {
@@ -15,7 +17,17 @@ class UsersController {
 
     /* [GET] /users/create */
     createUser(req, res, next) {
-        res.render('users/createUsers');
+        Promise.all([
+            Songs.find({}),
+            Albums.find({})
+        ])
+        .then(([songs, albums]) => {
+            res.render('users/createUsers', {
+                songs: mutipleMongooseoObjectT(songs),
+                albums: mutipleMongooseoObjectT(albums)
+            })
+        })
+        .catch(next);
     }
 
     /* [POST] user/store */
