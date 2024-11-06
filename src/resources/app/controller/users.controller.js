@@ -17,17 +17,7 @@ class UsersController {
 
     /* [GET] /users/create */
     createUser(req, res, next) {
-        Promise.all([
-            Songs.find({}),
-            Albums.find({})
-        ])
-        .then(([songs, albums]) => {
-            res.render('users/createUsers', {
-                songs: mutipleMongooseoObjectT(songs),
-                albums: mutipleMongooseoObjectT(albums)
-            })
-        })
-        .catch(next);
+        res.render('users/createUsers');
     }
 
     /* [POST] user/store */
@@ -55,6 +45,20 @@ class UsersController {
 
     /* [PUT] users/:id */
     updateUser(req, res, next) {
+        console.log(req.body.playlists); // In ra giá trị playlists nhận được
+
+        // Kiểm tra nếu playlists không phải là undefined hoặc null
+        if (req.body.playlists) {
+            // Nếu playlists là một chuỗi, chuyển đổi nó thành mảng
+            if (typeof req.body.playlists === 'string') {
+                req.body.playlists = [req.body.playlists];
+            }
+
+            // Lọc các giá trị không hợp lệ (chuỗi rỗng)
+            req.body.playlists = req.body.playlists.filter(
+                (id) => id && mongoose.Types.ObjectId.isValid(id),
+            );
+        }
         Users.updateOne({ _id: req.params.id }, req.body)
             .then(() => {
                 res.redirect('/users');
@@ -70,10 +74,16 @@ class UsersController {
     }
     /* [GET] users/:id */
     userDetail(req, res, next) {
-        Users.findById(req.params.id)
-            .then((user) => {
+        Promise.all([
+            Users.findById(req.params.id),
+            Songs.find({}),
+            Albums.find({}),
+        ])
+            .then(([user, songs, albums]) => {
                 res.render('users/detail', {
                     user: mongooseToObject(user),
+                    songs: mutipleMongooseoObjectT(songs),
+                    albums: mutipleMongooseoObjectT(albums),
                 });
             })
             .catch((err) => {

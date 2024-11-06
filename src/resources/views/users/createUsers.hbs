@@ -40,50 +40,6 @@
                 <input type="text" class="form-control mt-2" name="phone" placeholder="Phone...">    
             </div>
             <div class="form-group mt-3">
-                <label>Play list</label>
-                <input type="text" class="form-control mt-2" placeholder="playlists" name="playlists" >    
-            </div>
-            
-
-            
-
-
-            <div class="form-group mt-3">
-                <label>Favorite Albums</label>
-                <select class="form-select">
-                    <option selected>Select Albums</option>
-                    {{#each albums}}
-                        <option value="{{this.name}}">{{this.name}}</option>
-                    {{/each }}
-                </select>    
-            </div>
-            <div class="form-group mt-3">
-                <label>My Albums</label>
-                <input type="text" class="form-control" name="favoriteAlbums" class="result-selection">
-            </div>
-
-
-            <div class="form-group mt-3">
-                <label>Recently Played</label>
-                <input type="text" class="form-control mt-2" name="recentlyPlayed" readonly>    
-            </div>
-
-            <div class="form-group mt-3">
-                <label>Last Login</label>
-                <input type="date" class="form-control mt-2" name="lastLogin" >    
-            </div>
-
-            <div class="form-group mt-3">
-                <label>Last History</label>
-                <input type="date" class="form-control mt-2" name="loginHistory" >    
-            </div>
-
-            <div class="form-group mt-3">
-                <label>Subscription Plan</label>
-                <input type="text" class="form-control mt-2" placeholder="subscriptionPlan" name="subscriptionPlan" >    
-            </div>
-
-            <div class="form-group mt-3">
                 <label>Authorization</label>
                 <select class="form-select" aria-label="Default select example" name="singer">
                     <option selected>Select authorization</option>
