@@ -46,12 +46,6 @@
                 <input type="text" class="form-control mt-2" value="{{user.phone}}" name="phone" >    
             </div>
 
-            <div class="form-group mt-3">
-                <label>Playlist của bạn</label>
-                <input type="text" class="form-control mt-2" value="{{user.playlists}}" name="playlists" >    
-            </div>
-
-
             {{!-- Playlist user --}}
             <table class="table">
               <thead class="thead-dark">
@@ -65,7 +59,7 @@
                 </tr>
               </thead>
               <tbody>
-                {{!-- {{#each songs}}
+                {{#each songs}}
                   <tr>
                       <th scope="row">{{sum @index 1}}</th>
                       <td><img src="{{this.img}}" alt="" srcset=""></td>
@@ -73,27 +67,29 @@
                       <td>{{this.national}}</td>
                       <td>{{this.singer}}</td>
                       <td>{{this.album}}</td>
-                      <td>
-                        <a href="/songs/{{this._id}}/edit"><i class="bi bi-pencil-square"></i></a>
-                        <a href="/songs/{{this._id}}/delete" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#delete-song-model"><i class="bi bi-trash"></i></a>
-                      </td>
                   </tr>
-                {{/each}} --}}
+                {{/each}}
               </tbody>
             </table>
             <div class="form-group mt-3">
                 <label>Danh sách bài hát</label>
                 <select class="form-select list-selection">
                     <option selected>Chọn bài hát</option>
-                    {{#each songs}}
-                        <option value="{{this._id}}">{{this.name}}</option>
+                    {{#each allsongs}}
+                        <option value="{{this._id}}"
+                                data-img="{{this.img}}"
+                                data-national="{{this.national}}"
+                                data-singer="{{this.singer}}"
+                                data-album="{{this.album}}">
+                                {{this.name}}
+                        </option>
                     {{/each }}
                 </select>    
             </div>
             <button type="button" class="mt-3 btn btn-primary btn-add-list-selection">Thêm bài hát</button>
             
             
-            <div class="form-group mt-3">
+            {{!-- <div class="form-group mt-3">
                 <label>Danh sách albums</label>
                 <select class="form-select list-selection">
                     <option selected>Chọn albums</option>
@@ -102,7 +98,7 @@
                     {{/each }}
                 </select>    
             </div>
-            <button type="button" class="mt-3 btn btn-primary btn-add-list-selection">Thêm albums</button>
+            <button type="button" class="mt-3 btn btn-primary btn-add-list-selection">Thêm albums</button> --}}
 
             <div class="form-group mt-3">
                 <label>Nghe gần đây</label>

@@ -3,6 +3,7 @@ const Songs = require('../model/songs.model');
 const Albums = require('../model/albums.model');
 const { mutipleMongooseoObjectT } = require('../../util/mongoose');
 const { mongooseToObject } = require('../../util/mongoose');
+const mongoose = require('mongoose'); 
 class UsersController {
     /* [GET] /users */
     index(req, res, next) {
@@ -45,20 +46,17 @@ class UsersController {
 
     /* [PUT] users/:id */
     updateUser(req, res, next) {
-        console.log(req.body.playlists); // In ra giá trị playlists nhận được
+        console.log(req.body.playlistid); // Log for debugging
 
-        // Kiểm tra nếu playlists không phải là undefined hoặc null
-        if (req.body.playlists) {
-            // Nếu playlists là một chuỗi, chuyển đổi nó thành mảng
-            if (typeof req.body.playlists === 'string') {
-                req.body.playlists = [req.body.playlists];
-            }
+    if (req.body.playlistid) {
+        req.body.playlistid = Array.isArray(req.body.playlistid) 
+            ? req.body.playlistid 
+            : [req.body.playlistid];
 
-            // Lọc các giá trị không hợp lệ (chuỗi rỗng)
-            req.body.playlists = req.body.playlists.filter(
-                (id) => id && mongoose.Types.ObjectId.isValid(id),
-            );
+        req.body.favoriteSongs = req.body.playlistid
+            .filter(id => mongoose.Types.ObjectId.isValid(id));
         }
+
         Users.updateOne({ _id: req.params.id }, req.body)
             .then(() => {
                 res.redirect('/users');
@@ -74,22 +72,26 @@ class UsersController {
     }
     /* [GET] users/:id */
     userDetail(req, res, next) {
-        Promise.all([
-            Users.findById(req.params.id),
-            Songs.find({}),
-            Albums.find({}),
-        ])
-            .then(([user, songs, albums]) => {
+        Users.findById(req.params.id)
+            .then(user => {
+                return Promise.all([
+                    user,
+                    Songs.find({ _id: { $in: user.favoriteSongs } }),
+                    Albums.find({}),
+                    Songs.find({})
+                ]);
+            })
+            .then(([user, songs, albums, allsongs]) => {
                 res.render('users/detail', {
                     user: mongooseToObject(user),
                     songs: mutipleMongooseoObjectT(songs),
                     albums: mutipleMongooseoObjectT(albums),
+                    allsongs: mutipleMongooseoObjectT(allsongs)
                 });
             })
-            .catch((err) => {
-                next(err);
-            });
+            .catch(next);
     }
+    
 }
 
 module.exports = new UsersController();

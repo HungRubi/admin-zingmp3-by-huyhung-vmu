@@ -10,7 +10,6 @@ const users = new Schema(
         phone: { type: String, unique: true },
         quyenhan: String,
         email: { type: String, unique: true },
-        playlists: [{ type: String, default: [] }],
         favoriteSongs: [{ type: String, default: [] }],
         favoriteAlbums: [{ type: String, default: [] }],
         recentlyPlayed: [{ type: String, default: [] }],

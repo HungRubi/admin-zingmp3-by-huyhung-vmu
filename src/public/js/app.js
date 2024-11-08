@@ -72,32 +72,52 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     function addItemForInput() {
-        const btnAdd = document.querySelectorAll('.btn-add-list-selection');
-        const listSelect = document.querySelectorAll('.list-selection');
-        btnAdd.forEach((btn, indexBtn) => {
-            btn.addEventListener('click', function () {
-                listSelect.forEach((list, indexList) => {
-                    if (indexBtn === indexList) {
-                        const selectOption = list.options[list.selectedIndex];
-                        const selectName = selectOption.text;
-                        const selectId = selectOption.ariaValueMax;
-
-                        if (selectId !== 'Chọn albums' && selectId !== '') {
-                            const input =
-                                document.querySelectorAll('.result-selection')[
-                                    indexBtn
-                                ];
-                            input.value += selectName + ', ';
-                            console.log(input.value);
-                            list.remove(list.selectedIndex);
-                        } else {
-                            alert('Vui lòng chọn một album hợp lệ!');
-                        }
+        const btnAdd = document.querySelector('.btn-add-list-selection');
+        const listSelect = document.querySelector('.list-selection');
+        btnAdd.addEventListener('click', () => {
+            const selectedSongId = listSelect.value;
+            const selectedNameSong = listSelect.options[listSelect.selectedIndex].textContent;
+            if (selectedSongId === 'Chọn bài hát' || selectedSongId === '' || selectedNameSong === '') {
+                alert('Vui lòng chọn bài hát hợp lệ');
+            }
+            let isExit = false;
+            const rows = document.querySelectorAll('.table tbody tr');
+            
+            rows.forEach(row => {
+                const nameSong = row.querySelector('td:nth-child(3)').textContent;
+                const nameSinger = row.querySelector('td:nth-child(5)').textContent;
+    
+                if (nameSong === selectedNameSong) {
+                    const singerOption = listSelect.options[listSelect.selectedIndex].getAttribute('data-singer');
+                    if (nameSinger === singerOption) {
+                        isExit = true;
                     }
-                });
+                }
             });
+            if (isExit) {
+                alert('Bài hát này đã có trong playlist của bạn rồi!');
+            } else {
+                const songImg = listSelect.options[listSelect.selectedIndex].getAttribute("data-img");
+                const songNational = listSelect.options[listSelect.selectedIndex].getAttribute("data-national");
+                const songAlbum = listSelect.options[listSelect.selectedIndex].getAttribute("data-album");
+                const singer = listSelect.options[listSelect.selectedIndex].getAttribute("data-singer");
+    
+                const tbody = document.querySelector('.table tbody');
+                const newRow = document.createElement('tr');
+                newRow.innerHTML = `
+                    <th scope="row">${rows.length + 1}</th>
+                    <td><img src="${songImg}" alt="" srcset=""></td>
+                    <td>${selectedNameSong}</td>
+                    <td>${songNational}</td>
+                    <td>${singer}</td>
+                    <td>${songAlbum}</td>
+                    <input type="hidden" name="playlistid[]" value="${selectedSongId}">
+                `;
+                tbody.appendChild(newRow);
+            }
         });
     }
+    
     navClick();
     tabUi();
     hanlerClickTab();
