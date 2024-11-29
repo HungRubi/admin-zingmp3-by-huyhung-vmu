@@ -3,7 +3,7 @@ const Songs = require('../model/songs.model');
 const Albums = require('../model/albums.model');
 const { mutipleMongooseoObjectT } = require('../../util/mongoose');
 const { mongooseToObject } = require('../../util/mongoose');
-const mongoose = require('mongoose'); 
+const mongoose = require('mongoose');
 class UsersController {
     /* [GET] /users */
     index(req, res, next) {
@@ -46,15 +46,24 @@ class UsersController {
 
     /* [PUT] users/:id */
     updateUser(req, res, next) {
-        console.log(req.body.playlistid); // Log for debugging
+        if (req.body.playlistid) {
+            req.body.playlistid = Array.isArray(req.body.playlistid)
+                ? req.body.playlistid
+                : [req.body.playlistid];
 
-    if (req.body.playlistid) {
-        req.body.playlistid = Array.isArray(req.body.playlistid) 
-            ? req.body.playlistid 
-            : [req.body.playlistid];
+            req.body.favoriteSongs = req.body.playlistid.filter((id) =>
+                mongoose.Types.ObjectId.isValid(id),
+            );
+        }
 
-        req.body.favoriteSongs = req.body.playlistid
-            .filter(id => mongoose.Types.ObjectId.isValid(id));
+        if (req.body.favoriteAlbums) {
+            req.body.favoriteAlbums = Array.isArray(req.body.favoriteAlbums)
+                ? req.body.favoriteAlbums
+                : [req.body.favoriteAlbums];
+
+            req.body.favoriteAlbums = req.body.favoriteAlbums.filter((id) =>
+                mongoose.Types.ObjectId.isValid(id),
+            );
         }
 
         Users.updateOne({ _id: req.params.id }, req.body)
@@ -73,25 +82,26 @@ class UsersController {
     /* [GET] users/:id */
     userDetail(req, res, next) {
         Users.findById(req.params.id)
-            .then(user => {
+            .then((user) => {
                 return Promise.all([
                     user,
                     Songs.find({ _id: { $in: user.favoriteSongs } }),
                     Albums.find({}),
-                    Songs.find({})
+                    Songs.find({}),
+                    Albums.find({ _id: { $in: user.favoriteAlbums } }),
                 ]);
             })
-            .then(([user, songs, albums, allsongs]) => {
+            .then(([user, songs, albums, allsongs, favoriteAlbum]) => {
                 res.render('users/detail', {
                     user: mongooseToObject(user),
                     songs: mutipleMongooseoObjectT(songs),
                     albums: mutipleMongooseoObjectT(albums),
-                    allsongs: mutipleMongooseoObjectT(allsongs)
+                    allsongs: mutipleMongooseoObjectT(allsongs),
+                    favoriteAlbum: mutipleMongooseoObjectT(favoriteAlbum),
                 });
             })
             .catch(next);
     }
-    
 }
 
 module.exports = new UsersController();

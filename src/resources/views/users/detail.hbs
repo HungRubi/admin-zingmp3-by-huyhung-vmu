@@ -4,6 +4,8 @@
     Members
     <i class="bi bi-chevron-right"></i>
     Details
+    <i class="bi bi-chevron-right"></i>
+    {{user.fullname}}
   </span>
   <h2 class="name-page">Details</h2>
 </header>
@@ -47,9 +49,17 @@
             </div>
 
             {{!-- Playlist user --}}
-            <table class="table">
+            <div class="container mt-3" style="margin-left: 9px;">
+              <label class="lb-checkbox">
+                <input type="checkbox" name="checkAll" class="checkbox-all">
+                Xóa tất cả
+              </label>
+              <button type="button" class="btn btn-primary btn-del-table" disabled>Xóa</button>
+            </div>
+            <table class="table mt-1">
               <thead class="thead-dark">
                 <tr>
+                  <th scope="col"></th>
                   <th scope="col">#</th>
                   <th scope="col">Image</th>
                   <th scope="col">Name song</th>
@@ -58,15 +68,19 @@
                   <th scope="col">Album</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody class="body-songs">
                 {{#each songs}}
-                  <tr>
+                  <tr class="table-row">
+                      <td class="song-checkbox">
+                        <input type="checkbox" class="song-cb" name="checked-song[]">
+                      </td>
                       <th scope="row">{{sum @index 1}}</th>
                       <td><img src="{{this.img}}" alt="" srcset=""></td>
                       <td>{{this.name}}</td>
                       <td>{{this.national}}</td>
                       <td>{{this.singer}}</td>
                       <td>{{this.album}}</td>
+                      <input type="hidden" name="playlistid[]" value="{{this._id}}">
                   </tr>
                 {{/each}}
               </tbody>
@@ -87,19 +101,60 @@
                 </select>    
             </div>
             <button type="button" class="mt-3 btn btn-primary btn-add-list-selection">Thêm bài hát</button>
-            
-            
-            {{!-- <div class="form-group mt-3">
-                <label>Danh sách albums</label>
-                <select class="form-select list-selection">
-                    <option selected>Chọn albums</option>
+            {{!-- Playlist user --}}
+
+            {{!-- Album user --}}
+            <div class="container mt-3" style="margin-left: 9px;">
+              <label class="lb-checkbox">
+                <input type="checkbox" name="checkAllAlbum" class="checkbox-all-album">
+                Xóa tất cả
+              </label>
+              <button type="button" class="btn btn-primary btn-del-album" disabled>Xóa</button>
+            </div>
+            <table class="table mt-1 table-album">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">#</th>
+                  <th scope="col">Image</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Topic</th>
+                  <th scope="col">Description</th>
+                </tr>
+              </thead>
+              <tbody class="body-album">
+                {{#each favoriteAlbum}}
+                  <tr class="table-row-album">
+                      <td class="song-checkbox">
+                        <input type="checkbox" class="album-cb" name="checked-album[]">
+                      </td>
+                      <th scope="row">{{sum @index 1}}</th>
+                      <td><img src="{{this.img}}" alt="" srcset=""></td>
+                      <td>{{this.name}}</td>
+                      <td>{{this.topic}}</td>
+                      <td>{{this.description}}</td>
+                      <input type="hidden" name="favoriteAlbums[]" value="{{this._id}}">
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+            <div class="form-group mt-3">
+                <label>Danh sách bài hát</label>
+                <select class="form-select list-album">
+                    <option selected>Chọn album</option>
                     {{#each albums}}
-                        <option value="{{this._id}}">{{this.name}}</option>
+                        <option value="{{this._id}}"
+                          data-img="{{this.img}}"
+                          data-description="{{this.description}}"
+                          data-topic="{{this.topic}}">
+                          {{this.name}}
+                        </option>
                     {{/each }}
                 </select>    
             </div>
-            <button type="button" class="mt-3 btn btn-primary btn-add-list-selection">Thêm albums</button> --}}
-
+            <button type="button" class="mt-3 btn btn-primary btnadd-album">Thêm bài hát</button>
+            {{!-- Album user --}}
+            
             <div class="form-group mt-3">
                 <label>Nghe gần đây</label>
                 <input type="text" class="form-control mt-2" value="{{user.recentlyPlayed}}" name="recentlyPlayed">    
