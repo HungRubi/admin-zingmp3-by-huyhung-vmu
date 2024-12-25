@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "beautifull": "lint-staged",
-    "watch": "node-sass --watch src/resources/scss/app.scss src/public/css/app.css",
+    "watch": "sass --watch src/resources/scss/app.scss src/public/css/app.css",
     "start": "nodemon --inspect src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -39,13 +39,13 @@
     "method-override": "^3.0.0",
     "mongoose": "^8.5.1",
     "mongoose-slug-generator": "^1.0.4",
-    "remove-diacritics": "^0.1.1"
+    "remove-diacritics": "^0.1.1",
+    "sass": "^1.83.0"
   },
   "devDependencies": {
     "husky": "^9.0.11",
     "lint-staged": "^15.2.7",
     "morgan": "^1.10.0",
-    "node-sass": "^9.0.0",
     "nodemon": "^3.1.4",
     "prettier": "^3.3.3"
   }
