@@ -1,16 +1,35 @@
 const Partnor = require('../model/partnor.model');
 const { mongooseToObject } = require('../../util/mongoose');
 const { mutipleMongooseoObjectT } = require('../../util/mongoose');
+const {formatDate} = require('../../util/formatDate.util')
 class PartnorController {
     /* [GET] /partnors */
-    index(req, res, next) {
-        Partnor.find({})
-            .then((partnors) => {
-                res.render('partnors/partnor', {
-                    partnors: mutipleMongooseoObjectT(partnors),
-                });
-            })
-            .catch(next);
+    async index(req, res, next) {
+        let page = parseInt(req.query.page) || 1;
+        let limit = 10;
+        let skip = (page - 1) * limit;
+        try{
+            const partnor = await Partnor.find()
+                .skip(skip)
+                .limit(limit)
+                .lean();
+    
+            const partnorFormat = partnor.map(item => ({
+                ...item,
+                dateFormat: formatDate(item.updatedAt)
+            }));
+    
+            const totalUser = await Partnor.countDocuments();
+            const totalPage = Math.ceil(totalUser / limit);
+    
+            res.render('partnors/partnor', {
+                partnorFormat,
+                currentPage: page,
+                totalPage,
+            });
+        }catch(err){
+            next(err);
+        }
     }
 
     /* [GET] /topic/create */

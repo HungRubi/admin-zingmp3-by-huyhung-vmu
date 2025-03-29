@@ -4,16 +4,61 @@ const Albums = require('../model/albums.model');
 const { mutipleMongooseoObjectT } = require('../../util/mongoose');
 const { mongooseToObject } = require('../../util/mongoose');
 const mongoose = require('mongoose');
+const {formatDate} = require('../../util/formatDate.util');
 class UsersController {
     /* [GET] /users */
-    index(req, res, next) {
-        Users.find({})
-            .then((users) => {
-                res.render('users/users', {
-                    users: mutipleMongooseoObjectT(users),
+    async index(req, res, next) {
+        let page = parseInt(req.query.page) || 1;
+        let limit = 10;
+        let skip = (page - 1) * limit;
+        let sortField = req.query.sort || 'fullname'; 
+        let sortOrder = req.query.order === 'desc' ? -1 : 1; 
+        try{
+            const searchQuery = req.query.timkiem?.trim() || '';
+            if (searchQuery) {
+                const user = await Users.find({
+                    fullname: { $regex: searchQuery, $options: 'i' }
+                }).sort({ [sortField]: sortOrder }).lean();
+    
+                const userFormat = user.map(item => ({
+                    ...item,
+                    lastUpdate: formatDate(item.updatedAt)
+                }));
+    
+                return res.render('users/users', {
+                    searchType: true,
+                    searchUser: userFormat,
+                    searchQuery,
+                    currentSort: sortField,
+                    currentOrder: sortOrder === 1 ? 'asc' : 'desc'
                 });
-            })
-            .catch(next);
+            } 
+    
+            const user = await Users.find()
+                .skip(skip)
+                .limit(limit)
+                .sort({ [sortField]: sortOrder }) // Sắp xếp sản phẩm
+                .lean();
+    
+            const userFormat = user.map(item => ({
+                ...item,
+                dateFormat: formatDate(item.updatedAt)
+            }));
+    
+            const totalUser = await Users.countDocuments();
+            const totalPage = Math.ceil(totalUser / limit);
+    
+            res.render('users/users', {
+                userFormat,
+                currentPage: page,
+                totalPage,
+                searchType: false,
+                currentSort: sortField,
+                currentOrder: sortOrder === 1 ? 'asc' : 'desc'
+            });
+        }catch(err){
+            next(err);
+        }
     }
 
     /* [GET] /users/create */

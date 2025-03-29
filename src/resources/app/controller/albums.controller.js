@@ -3,16 +3,61 @@ const Topic = require('../model/topic.model');
 const { mutipleMongooseoObjectT } = require('../../util/mongoose');
 const { createSlug } = require('../../util/slug');
 const { mongooseToObject } = require('../../util/mongoose');
+const {formatDate} = require('../../util/formatDate.util');
 class AlbumsController {
     /* [GET] /albums */
-    index(req, res, next) {
-        Albums.find({})
-            .then((albums) => {
-                res.render('albums/albums', {
-                    albums: mutipleMongooseoObjectT(albums),
+    async index(req, res, next) {
+        let page = parseInt(req.query.page) || 1;
+        let limit = 10;
+        let skip = (page - 1) * limit;
+        let sortField = req.query.sort || 'name'; 
+        let sortOrder = req.query.order === 'desc' ? -1 : 1; 
+        try{
+            const searchQuery = req.query.timkiem?.trim() || '';
+            if (searchQuery) {
+                const albums = await Albums.find({
+                    name: { $regex: searchQuery, $options: 'i' }
+                }).sort({ [sortField]: sortOrder }).lean();
+    
+                const albumFormat = albums.map(item => ({
+                    ...item,
+                    lastUpdate: formatDate(item.updatedAt)
+                }));
+    
+                return res.render('albums/albums', {
+                    searchType: true,
+                    searchArticle: albumFormat,
+                    searchQuery,
+                    currentSort: sortField,
+                    currentOrder: sortOrder === 1 ? 'asc' : 'desc'
                 });
-            })
-            .catch(next);
+            } 
+    
+            const albums = await Albums.find()
+                .skip(skip)
+                .limit(limit)
+                .sort({ [sortField]: sortOrder }) // Sắp xếp sản phẩm
+                .lean();
+    
+            const formatAlbum = albums.map(item => ({
+                ...item,
+                dateFormat: formatDate(item.updatedAt)
+            }));
+    
+            const totalAlbum = await Albums.countDocuments();
+            const totalPage = Math.ceil(totalAlbum / limit);
+    
+            res.render('albums/albums', {
+                formatAlbum,
+                currentPage: page,
+                totalPage,
+                searchType: false,
+                currentSort: sortField,
+                currentOrder: sortOrder === 1 ? 'asc' : 'desc'
+            });
+        }catch(err){
+            next(err);
+        }
     }
 
     /* [GET] /albums/ceate */

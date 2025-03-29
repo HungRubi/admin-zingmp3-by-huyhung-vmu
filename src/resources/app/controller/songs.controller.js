@@ -2,18 +2,62 @@ const Songs = require('../model/songs.model');
 const Singers = require('../model/singers.model');
 const { createSlug } = require('../../util/slug');
 const Albums = require('../model/albums.model');
-const { mutipleMongooseoObjectT } = require('../../util/mongoose');
-const { mongooseToObject } = require('../../util/mongoose');
+const { mutipleMongooseoObjectT, mongooseToObject } = require('../../util/mongoose');
+const {formatDate} = require('../../util/formatDate.util');
 class SongsController {
     /* GET /songs */
-    index(req, res, next) {
-        Songs.find({})
-            .then((songs) => {
-                res.render('songs/songs', {
-                    songs: mutipleMongooseoObjectT(songs),
+    async index(req, res, next) {
+        let page = parseInt(req.query.page) || 1;
+        let limit = 10;
+        let skip = (page - 1) * limit;
+        let sortField = req.query.sort || 'name'; 
+        let sortOrder = req.query.order === 'desc' ? -1 : 1; 
+        try{
+            const searchQuery = req.query.timkiem?.trim() || '';
+            if (searchQuery) {
+                const songs = await Songs.find({
+                    name: { $regex: searchQuery, $options: 'i' }
+                }).sort({ [sortField]: sortOrder }).lean();
+    
+                const songFormat = songs.map(item => ({
+                    ...item,
+                    lastUpdate: formatDate(item.updatedAt)
+                }));
+    
+                return res.render('songs/songs', {
+                    searchType: true,
+                    searchArticle: songFormat,
+                    searchQuery,
+                    currentSort: sortField,
+                    currentOrder: sortOrder === 1 ? 'asc' : 'desc'
                 });
-            })
-            .catch(next);
+            } 
+    
+            const songs = await Songs.find()
+                .skip(skip)
+                .limit(limit)
+                .sort({ [sortField]: sortOrder }) // Sắp xếp sản phẩm
+                .lean();
+    
+            const formatSongs = songs.map(item => ({
+                ...item,
+                dateFormat: formatDate(item.updatedAt)
+            }));
+    
+            const totalSongs = await Songs.countDocuments();
+            const totalPage = Math.ceil(totalSongs / limit);
+    
+            res.render('songs/songs', {
+                formatSongs,
+                currentPage: page,
+                totalPage,
+                searchType: false,
+                currentSort: sortField,
+                currentOrder: sortOrder === 1 ? 'asc' : 'desc'
+            });
+        }catch(err){
+            next(err);
+        }
     }
 
     /* GET /songs/create-song */

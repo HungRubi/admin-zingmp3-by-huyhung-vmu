@@ -2,18 +2,61 @@ const Singers = require('../model/singers.model');
 const { mutipleMongooseoObjectT } = require('../../util/mongoose');
 const { mongooseToObject } = require('../../util/mongoose');
 const { createSlug } = require('../../util/slug');
-const { response } = require('express');
+const {formatDate} = require('../../util/formatDate.util')
 class SingerController {
     /* [GET] /singers */
-    index(req, res, next) {
-        Singers.find({})
-            .then((singers) => {
-                console.log(singers);
-                res.render('singers/singers', {
-                    singers: mutipleMongooseoObjectT(singers),
+    async index(req, res, next) {
+        let page = parseInt(req.query.page) || 1;
+        let limit = 10;
+        let skip = (page - 1) * limit;
+        let sortField = req.query.sort || 'stagename'; 
+        let sortOrder = req.query.order === 'desc' ? -1 : 1; 
+        try{
+            const searchQuery = req.query.timkiem?.trim() || '';
+            if (searchQuery) {
+                const singer = await Singers.find({
+                    stagename: { $regex: searchQuery, $options: 'i' }
+                }).sort({ [sortField]: sortOrder }).lean();
+    
+                const singerFormat = singer.map(item => ({
+                    ...item,
+                    lastUpdate: formatDate(item.updatedAt)
+                }));
+    
+                return res.render('singers/singers', {
+                    searchType: true,
+                    searchSinger: singerFormat,
+                    searchQuery,
+                    currentSort: sortField,
+                    currentOrder: sortOrder === 1 ? 'asc' : 'desc'
                 });
-            })
-            .catch(next);
+            } 
+    
+            const singer = await Singers.find()
+                .skip(skip)
+                .limit(limit)
+                .sort({ [sortField]: sortOrder }) // Sắp xếp sản phẩm
+                .lean();
+    
+            const singerFormat = singer.map(item => ({
+                ...item,
+                dateFormat: formatDate(item.updatedAt)
+            }));
+    
+            const totalUser = await Singers.countDocuments();
+            const totalPage = Math.ceil(totalUser / limit);
+    
+            res.render('singers/singers', {
+                singerFormat,
+                currentPage: page,
+                totalPage,
+                searchType: false,
+                currentSort: sortField,
+                currentOrder: sortOrder === 1 ? 'asc' : 'desc'
+            });
+        }catch(err){
+            next(err);
+        }
     }
     /* [GET] /singers/create */
     createSinger(req, res, next) {

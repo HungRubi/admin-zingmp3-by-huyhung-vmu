@@ -6,13 +6,13 @@
   <h2 class="name-page">Songs</h2>
   <div class="search-members mt-25">
     <div class="search-header">
-      <form class="search search-main">
-        <div class="container_search ">
-          <button class="btn_search center">
+      <form class="search search-main" method="GET" action="/songs">
+        <div class="container_search">
+          <button class="btn_search center" type="submit">
             <i class="bi bi-search"></i>
           </button>
           <div class="input_warapper">
-              <input type="text" name="" id="" placeholder="Search songs...">
+              <input type="text" name="timkiem" placeholder="Search songs..." value="{{searchQuery}}">
           </div>
         </div>
       </form>
@@ -36,32 +36,128 @@
       <tr>
         <th scope="col">#</th>
         <th scope="col">Image</th>
-        <th scope="col">Name song</th>
-        <th scope="col">National</th>
-        <th scope="col">Singer</th>
-        <th scope="col">Album</th>
+        <th scope="col" class="col-2">
+            Name song 
+            <a href="?sort=name&order={{#if (and (eq currentSort 'name') (eq currentOrder 'asc'))}}desc{{else}}asc{{/if}}">
+                <i class="bi {{#if (eq currentSort 'name')}}{{#if (eq currentOrder 'asc')}}bi-caret-up-fill{{else}}bi-caret-down-fill{{/if}}{{else}}bi-chevron-expand{{/if}}" 
+                style="font-size:12px; color:#000;">
+                </i>
+            </a>
+        </th>
+        <th scope="col" class="col-2">
+            National 
+            <a href="?sort=national&order={{#if (and (eq currentSort 'national') (eq currentOrder 'asc'))}}desc{{else}}asc{{/if}}">
+                <i class="bi {{#if (eq currentSort 'national')}}{{#if (eq currentOrder 'asc')}}bi-caret-up-fill{{else}}bi-caret-down-fill{{/if}}{{else}}bi-chevron-expand{{/if}}" 
+                style="font-size:12px; color:#000;">
+                </i>
+            </a>
+        </th>
+        <th scope="col" class="col-2">
+            Singer 
+            <a href="?sort=singer&order={{#if (and (eq currentSort 'singer') (eq currentOrder 'asc'))}}desc{{else}}asc{{/if}}">
+                <i class="bi {{#if (eq currentSort 'singer')}}{{#if (eq currentOrder 'asc')}}bi-caret-up-fill{{else}}bi-caret-down-fill{{/if}}{{else}}bi-chevron-expand{{/if}}" 
+                style="font-size:12px; color:#000;">
+                </i>
+            </a>
+        </th>
+        <th scope="col" class="col-2">
+            Album 
+            <a href="?sort=album&order={{#if (and (eq currentSort 'album') (eq currentOrder 'asc'))}}desc{{else}}asc{{/if}}">
+                <i class="bi {{#if (eq currentSort 'album')}}{{#if (eq currentOrder 'asc')}}bi-caret-up-fill{{else}}bi-caret-down-fill{{/if}}{{else}}bi-chevron-expand{{/if}}" 
+                style="font-size:12px; color:#000;">
+                </i>
+            </a>
+        </th>
         <th scope="col">Operation</th>
       </tr>
     </thead>
     <tbody>
-      {{#each songs}}
-        <tr>
+      {{#if searchType}}
+        {{#each searchArticle}}
+          <tr>
             <th scope="row">{{sum @index 1}}</th>
-            <td><img src="{{this.img}}" alt="" srcset=""></td>
-            <td>{{this.name}}</td>
-            <td>{{this.national}}</td>
-            <td>{{this.singer}}</td>
-            <td>{{this.album}}</td>
-            <td>
-              <a href="/songs/{{this._id}}/edit"><i class="bi bi-pencil-square"></i></a>
+            <td class="col">
+              <img src="{{this.img}}" alt="" srcset="">
+            </td>
+            <td class="col-3">
+              {{this.name}}
+            </td>
+            <td class="col">
+              {{this.national}}
+            </td>
+            <td class="col-1">
+              {{this.singer}}
+            </td>
+            <td class="col-3">
+              {{this.album}}
+            </td>
+            <td class="col">
+              <a href="/songs/{{this._id}}/edit" style="margin-right: 15px;">
+                <i class="bi bi-pencil-square"></i>
+              </a>
               <a href="/songs/{{this._id}}/delete" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#delete-song-model"><i class="bi bi-trash"></i></a>
             </td>
-        </tr>
+          </tr>
+        {{/each}}
       {{else}}
-        <span class="text-center">chưa có bài hát nào trong kho. <a href="/songs/create" style="color: rgba(0, 0, 255, 0.884);">Thêm bài hát</a></span>
-      {{/each}}
+        {{#each formatSongs}}
+          <tr>
+            <th scope="row">{{sum @index 1}}</th>
+            <td class="col">
+              <img src="{{this.img}}" alt="" srcset="">
+            </td>
+            <td class="col-3">
+              {{this.name}}
+            </td>
+            <td class="col">
+              {{this.national}}
+            </td>
+            <td class="col-1">
+              {{this.singer}}
+            </td>
+            <td class="col-3">
+              {{this.album}}
+            </td>
+            <td class="col">
+              <a href="/songs/{{this._id}}/edit" style="margin-right: 15px;">
+                <i class="bi bi-pencil-square"></i>
+              </a>
+              <a href="/songs/{{this._id}}/delete" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#delete-song-model"><i class="bi bi-trash"></i></a>
+            </td>
+          </tr>
+        {{/each}}
+      {{/if}}
     </tbody>
   </table>
+  <div class="page_bar is-center">
+    {{#if (gt currentPage 1)}}
+      <button class="next previous">
+          <a href="?page={{subtract currentPage 1}}" style="color:#292828;">
+              <i class="bi bi-chevron-left"></i>
+              Previous
+          </a>
+      </button>
+    {{/if}}
+    {{#each (range 1 totalPage)}}
+    {{#if (eq this ../currentPage)}}
+      <button class="number_page active">
+      <a href="?page={{this}}">{{this}}</a>
+      </button>
+    {{else}}
+        <button class="number_page">
+        <a style="color:#292828;" href="?page={{this}}">{{this}}</a>
+        </button>
+    {{/if}}
+    {{/each}}
+    {{#if (gt currentPage 1)}}
+    <button class="next previous">
+        <a href="?page={{add currentPage 1}}" style="color:#292828;">
+            Next
+            <i class="bi bi-chevron-right"></i>
+        </a>
+    </button>
+    {{/if}}
+  </div>
 </div>
 {{!-- form hiiden delete --}}
 <form method="POST" name="delete-song-form"></form>

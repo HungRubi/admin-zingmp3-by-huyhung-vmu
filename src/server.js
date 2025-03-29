@@ -10,14 +10,26 @@ const port = 3000;
 const app = express();
 
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(express.json());
 app.engine(
     '.hbs',
     handlebars.engine({
         extname: '.hbs',
         helpers: {
             sum: (a, b) => a + b,
+            add: (a, b) => a + b,
+            subtract: (a, b) => a - b,
+            eq: (a, b) => a === b,
+            gt: (a, b) => a > b,
+            lt: (a, b) => a < b,
+            and: (a, b) => a && b,
+            range: (start, end) => {
+                let arr = [];
+                for (let i = start; i <= end; i++) arr.push(i);
+                return arr;
+            }
         },
+        
     }),
 );
 

@@ -6,13 +6,13 @@
   <h2 class="name-page">Singers</h2>
   <div class="search-members mt-25">
     <div class="search-header">
-      <form class="search search-main">
+      <form class="search search-main" action="/singers">
         <div class="container_search ">
           <button class="btn_search center">
             <i class="bi bi-search"></i>
           </button>
           <div class="input_warapper">
-              <input type="text" name="" id="" placeholder="Search members...">
+              <input type="text" name="timkiem" placeholder="Search members...">
           </div>
         </div>
       </form>
@@ -34,34 +34,96 @@
     <thead class="thead-dark">
       <tr>
         <th scope="col">#</th>
-        <th scope="col">Name</th>
         <th scope="col">Image</th>
+        <th scope="col">
+            Name 
+            <a href="?sort=name&order={{#if (and (eq currentSort 'name') (eq currentOrder 'asc'))}}desc{{else}}asc{{/if}}">
+                <i class="bi {{#if (eq currentSort 'name')}}{{#if (eq currentOrder 'asc')}}bi-caret-up-fill{{else}}bi-caret-down-fill{{/if}}{{else}}bi-chevron-expand{{/if}}" 
+                style="font-size:12px; color:#000;">
+                </i>
+            </a>
+        </th>
+        <th scope="col">
+            Stagename 
+            <a href="?sort=stagename&order={{#if (and (eq currentSort 'stagename') (eq currentOrder 'asc'))}}desc{{else}}asc{{/if}}">
+                <i class="bi {{#if (eq currentSort 'stagename')}}{{#if (eq currentOrder 'asc')}}bi-caret-up-fill{{else}}bi-caret-down-fill{{/if}}{{else}}bi-chevron-expand{{/if}}" 
+                style="font-size:12px; color:#000;">
+                </i>
+            </a>
+        </th>
         <th scope="col">Birth</th>
-        <th scope="col">Stagename</th>
         <th scope="col">Operation</th>
       </tr>
     </thead>
     <tbody>
-      {{#each singers}}
-        <tr>
-            <th scope="row">{{sum @index 1}}</th>
-            <td>{{this.name}}</td>
-            <td>
-              <img src="{{this.img}}" alt="">
-            </td>
-            <td>{{this.birth}}</td>
-            <td>{{this.stagename}}</td>
-            <td>
-              <a href="/singers/{{this._id}}/edit"><i class="bi bi-pencil-square"></i></a>
-              <a href="/singers/{{this._id}}/delete" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#delete-user-model"><i class="bi bi-trash"></i></a>
-            </td>
-        </tr>
+      {{#if searchType}}
+        {{#each searchSinger}}
+          <tr>
+              <th scope="row">{{sum @index 1}}</th>
+              <td>
+                <img src="{{this.img}}" alt="">
+              </td>
+              <td>{{this.name}}</td>
+              <td>{{this.stagename}}</td>
+              <td>{{this.birth}}</td>
+              <td class="ps-3">
+                <a href="/singers/{{this._id}}/edit" style="margin-right: 15px;">
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+                <a href="/singers/{{this._id}}/delete" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#delete-user-model"><i class="bi bi-trash"></i></a>
+              </td>
+          </tr>
+        {{/each}}
       {{else}}
-        <span class="text-center">chưa có singer nào. <a href="/singers/create" style="color: rgba(0, 0, 255, 0.884);">Thêm bài hát</a></span>
-      {{/each}}
-      
+        {{#each singerFormat}}
+          <tr>
+              <th scope="row">{{sum @index 1}}</th>
+              <td>
+                <img src="{{this.img}}" alt="">
+              </td>
+              <td>{{this.name}}</td>
+              <td>{{this.stagename}}</td>
+              <td>{{this.birth}}</td>
+              <td class="ps-3">
+                <a href="/singers/{{this._id}}/edit" style="margin-right: 15px;">
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+                <a href="/singers/{{this._id}}/delete" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#delete-user-model"><i class="bi bi-trash"></i></a>
+              </td>
+          </tr>
+        {{/each}}
+      {{/if}}  
     </tbody>
   </table>
+  <div class="page_bar is-center">
+    {{#if (gt currentPage 1)}}
+    <button class="next previous">
+        <a href="?page={{subtract currentPage 1}}" style="color:#292828;">
+            <i class="bi bi-chevron-left"></i>
+            Previous
+        </a>
+    </button>
+    {{/if}}
+    {{#each (range 1 totalPage)}}
+    {{#if (eq this ../currentPage)}}
+        <button class="number_page active">
+        <a href="?page={{this}}">{{this}}</a>
+        </button>
+    {{else}}
+        <button class="number_page">
+        <a style="color:#292828;" href="?page={{this}}">{{this}}</a>
+        </button>
+    {{/if}}
+    {{/each}}
+    {{#if (gt currentPage 1)}}
+    <button class="next previous">
+        <a href="?page={{add currentPage 1}}" style="color:#292828;">
+            Next
+            <i class="bi bi-chevron-right"></i>
+        </a>
+    </button>
+    {{/if}}
+  </div>
 </div>
 
 <form method="POST" name="delete-user-form"></form>

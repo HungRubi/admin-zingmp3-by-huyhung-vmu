@@ -2,16 +2,61 @@ const Topic = require('../model/topic.model');
 const { mongooseToObject } = require('../../util/mongoose');
 const { mutipleMongooseoObjectT } = require('../../util/mongoose');
 const { createSlug } = require('../../util/slug');
+const {formatDate} = require('../../util/formatDate.util');
 class ToPicController {
     /* [GET] /topic */
-    index(req, res, next) {
-        Topic.find({})
-            .then((topic) => {
-                res.render('topic/topic', {
-                    topic: mutipleMongooseoObjectT(topic),
+    async index(req, res, next) {
+        let page = parseInt(req.query.page) || 1;
+        let limit = 10;
+        let skip = (page - 1) * limit;
+        let sortField = req.query.sort || 'name'; 
+        let sortOrder = req.query.order === 'desc' ? -1 : 1; 
+        try{
+            const searchQuery = req.query.timkiem?.trim() || '';
+            if (searchQuery) {
+                const topic = await Topic.find({
+                    name: { $regex: searchQuery, $options: 'i' }
+                }).sort({ [sortField]: sortOrder }).lean();
+    
+                const topicFormat = topic.map(item => ({
+                    ...item,
+                    lastUpdate: formatDate(item.updatedAt)
+                }));
+    
+                return res.render('topic/topic', {
+                    searchType: true,
+                    searchTopic: topicFormat,
+                    searchQuery,
+                    currentSort: sortField,
+                    currentOrder: sortOrder === 1 ? 'asc' : 'desc'
                 });
-            })
-            .catch(next);
+            } 
+    
+            const topic = await Topic.find()
+                .skip(skip)
+                .limit(limit)
+                .sort({ [sortField]: sortOrder }) // Sắp xếp sản phẩm
+                .lean();
+    
+            const formatTopic = topic.map(item => ({
+                ...item,
+                dateFormat: formatDate(item.updatedAt)
+            }));
+    
+            const totalTopic = await Topic.countDocuments();
+            const totalPage = Math.ceil(totalTopic / limit);
+    
+            res.render('topic/topic', {
+                formatTopic,
+                currentPage: page,
+                totalPage,
+                searchType: false,
+                currentSort: sortField,
+                currentOrder: sortOrder === 1 ? 'asc' : 'desc'
+            });
+        }catch(err){
+            next(err);
+        }
     }
 
     /* [GET] /topic/create */

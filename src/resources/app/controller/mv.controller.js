@@ -3,16 +3,61 @@ const Singers = require('../model/singers.model');
 const { mutipleMongooseoObjectT } = require('../../util/mongoose');
 const { createSlug } = require('../../util/slug');
 const { mongooseToObject } = require('../../util/mongoose');
+const {formatDate} = require('../../util/formatDate.util')
 class MVcontroller {
     /* [GET] /mv */
-    index(req, res, next) {
-        MVs.find({})
-            .then((mv) => {
-                res.render('mv/mv', {
-                    mv: mutipleMongooseoObjectT(mv),
+    async index(req, res, next) {
+        let page = parseInt(req.query.page) || 1;
+        let limit = 10;
+        let skip = (page - 1) * limit;
+        let sortField = req.query.sort || 'name'; 
+        let sortOrder = req.query.order === 'desc' ? -1 : 1; 
+        try{
+            const searchQuery = req.query.timkiem?.trim() || '';
+            if (searchQuery) {
+                const mvs = await MVs.find({
+                    name: { $regex: searchQuery, $options: 'i' }
+                }).sort({ [sortField]: sortOrder }).lean();
+    
+                const mvFormat = mvs.map(item => ({
+                    ...item,
+                    lastUpdate: formatDate(item.updatedAt)
+                }));
+    
+                return res.render('mv/mv', {
+                    searchType: true,
+                    searchMv: mvFormat,
+                    searchQuery,
+                    currentSort: sortField,
+                    currentOrder: sortOrder === 1 ? 'asc' : 'desc'
                 });
-            })
-            .catch(next);
+            } 
+    
+            const mvs = await MVs.find()
+                .skip(skip)
+                .limit(limit)
+                .sort({ [sortField]: sortOrder }) // Sắp xếp sản phẩm
+                .lean();
+    
+            const formatMv = mvs.map(item => ({
+                ...item,
+                dateFormat: formatDate(item.updatedAt)
+            }));
+    
+            const totalMv = await MVs.countDocuments();
+            const totalPage = Math.ceil(totalMv / limit);
+    
+            res.render('mv/mv', {
+                formatMv,
+                currentPage: page,
+                totalPage,
+                searchType: false,
+                currentSort: sortField,
+                currentOrder: sortOrder === 1 ? 'asc' : 'desc'
+            });
+        }catch(err){
+            next(err);
+        }
     }
 
     /* [GET] /mv/ceate */

@@ -6,13 +6,13 @@
   <h2 class="name-page">Topic</h2>
   <div class="search-members mt-25">
     <div class="search-header">
-      <form class="search search-main">
+      <form class="search search-main" action="/topic">
         <div class="container_search ">
           <button class="btn_search center">
             <i class="bi bi-search"></i>
           </button>
           <div class="input_warapper">
-              <input type="text" name="" id="" placeholder="Search topic...">
+              <input type="text" name="timkiem" placeholder="Search topic...">
           </div>
         </div>
       </form>
@@ -34,28 +34,95 @@
   <table class="table">
     <thead class="thead-dark">
         <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Title</th>
-            <th scope="col">Operation</th>
+          <th scope="col">#</th>
+          <th scope="col" class="col-2">
+              Name 
+              <a href="?sort=name&order={{#if (and (eq currentSort 'name') (eq currentOrder 'asc'))}}desc{{else}}asc{{/if}}">
+                  <i class="bi {{#if (eq currentSort 'name')}}{{#if (eq currentOrder 'asc')}}bi-caret-up-fill{{else}}bi-caret-down-fill{{/if}}{{else}}bi-chevron-expand{{/if}}" 
+                  style="font-size:12px; color:#000;">
+                  </i>
+              </a>
+          </th>
+          <th scope="col" class="col-2">
+              Title 
+              <a href="?sort=title&order={{#if (and (eq currentSort 'title') (eq currentOrder 'asc'))}}desc{{else}}asc{{/if}}">
+                  <i class="bi {{#if (eq currentSort 'title')}}{{#if (eq currentOrder 'asc')}}bi-caret-up-fill{{else}}bi-caret-down-fill{{/if}}{{else}}bi-chevron-expand{{/if}}" 
+                  style="font-size:12px; color:#000;">
+                  </i>
+              </a>
+          </th>
+          <th scope="col">Operation</th>
         </tr>
     </thead>
     <tbody>
-        {{#each topic}}
+      {{#if searchType}}
+        {{#each searchTopic}}
           <tr>
               <th scope="row">{{sum @index 1}}</th>
-              <td>{{this.name}}</td>
-              <td>{{this.title}}</td>
-              <td>
-                  <a href="/topic/{{this._id}}/edit"><i class="bi bi-pencil-square"></i></a>
+              <td class="col-4">
+                {{this.name}}
+              </td>
+              <td class="col-5">
+                {{this.title}}
+              </td>
+              <td class="col-2">
+                  <a href="/topic/{{this._id}}/edit" style="margin-right: 15px;">
+                    <i class="bi bi-pencil-square"></i>
+                  </a>
                   <a href="#" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#delete-album-model"><i class="bi bi-trash"></i></a>
               </td>
           </tr>
-        {{else}}
-            <span class="text-center">Chưa có chủ đề nào được thêm. <a href="/topic/create" style="color: rgba(0, 0, 255, 0.884);">Thêm chủ đề</a></span>
         {{/each}}
+      {{else}}
+        {{#each formatTopic}}
+          <tr>
+              <th scope="row">{{sum @index 1}}</th>
+              <td class="col-4">
+                {{this.name}}
+              </td>
+              <td class="col-5">
+                {{this.title}}
+              </td>
+              <td class="col-2">
+                  <a href="/topic/{{this._id}}/edit" style="margin-right: 15px;">
+                    <i class="bi bi-pencil-square"></i>
+                  </a>
+                  <a href="#" data-bs-toggle="modal" data-id="{{this._id}}" data-bs-target="#delete-album-model"><i class="bi bi-trash"></i></a>
+              </td>
+          </tr>
+        {{/each}}
+      {{/if}}
     </tbody>
   </table>
+  <div class="page_bar is-center">
+    {{#if (gt currentPage 1)}}
+    <button class="next previous">
+        <a href="?page={{subtract currentPage 1}}" style="color:#292828;">
+            <i class="bi bi-chevron-left"></i>
+            Previous
+        </a>
+    </button>
+    {{/if}}
+    {{#each (range 1 totalPage)}}
+    {{#if (eq this ../currentPage)}}
+        <button class="number_page active">
+        <a href="?page={{this}}">{{this}}</a>
+        </button>
+    {{else}}
+        <button class="number_page">
+        <a style="color:#292828;" href="?page={{this}}">{{this}}</a>
+        </button>
+    {{/if}}
+    {{/each}}
+    {{#if (gt currentPage 1)}}
+    <button class="next previous">
+        <a href="?page={{add currentPage 1}}" style="color:#292828;">
+            Next
+            <i class="bi bi-chevron-right"></i>
+        </a>
+    </button>
+    {{/if}}
+  </div>
 </div>
 
 <form method="POST" name="delete-album-form"></form>

@@ -6,9 +6,13 @@ const albumsRoute = require('../router/albums.route');
 const topicRoute = require('../router/topic.route');
 const partnorRoute = require('../router/partnor.route');
 const mvRoute = require('../router/mv.route');
+const bannerRoute = require('../router/banner.route');
+const apiGlobal = require('../router/apiGlobal.route');
 
 function route(app) {
+    app.use('/api', apiGlobal);
     app.use('/songs', songsRoute);
+    app.use('/banner', bannerRoute);
     app.use('/mv', mvRoute);
     app.use('/partnors', partnorRoute);
     app.use('/topic', topicRoute);

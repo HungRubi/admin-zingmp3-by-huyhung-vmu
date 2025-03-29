@@ -1,0 +1,172 @@
+{{!-- Header --}}
+<header class="header-content">
+  <span class="path-title">Dashboard
+    <i class="bi bi-chevron-right"></i>
+    Banner
+  </span>
+  <h2 class="name-page">Banner</h2>
+  <div class="search-members mt-25">
+    <div class="search-header">
+      <form class="search search-main" method="GET" action="/banner">
+        <div class="container_search">
+          <button class="btn_search center" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+          <div class="input_warapper">
+              <input type="text" name="timkiem" placeholder="Search banners..." value="{{searchQuery}}">
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="button-active center">
+      <button class="export"><i class="bi bi-journal-arrow-down"></i> Export</button>
+      <a href="/banner/add">
+        <button class="add-member btn btn-primary">
+          <i class="bi bi-plus"></i>
+          Add Banner
+        </button>
+      </a>
+    </div>
+  </div>
+</header>
+
+{{!-- Table --}}
+<div class="wrapper-content-page">
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col" class="col-2">
+                Name 
+                <a href="?sort=name&order={{#if (and (eq currentSort 'name') (eq currentOrder 'asc'))}}desc{{else}}asc{{/if}}">
+                    <i class="bi {{#if (eq currentSort 'name')}}{{#if (eq currentOrder 'asc')}}bi-caret-up-fill{{else}}bi-caret-down-fill{{/if}}{{else}}bi-chevron-expand{{/if}}" 
+                    style="font-size:12px; color:#000;">
+                    </i>
+                </a>
+            </th>
+            <th scope="col" class="col-2">
+                Last update 
+                <a href="?sort=lastUpdate&order={{#if (and (eq currentSort 'lastUpdate') (eq currentOrder 'asc'))}}desc{{else}}asc{{/if}}">
+                    <i class="bi {{#if (eq currentSort 'lastUpdate')}}{{#if (eq currentOrder 'asc')}}bi-caret-up-fill{{else}}bi-caret-down-fill{{/if}}{{else}}bi-chevron-expand{{/if}}" 
+                    style="font-size:12px; color:#000;">
+                    </i>
+                </a>
+            </th>
+            <th scope="col">Image</th>
+            <th scope="col">Operation</th>
+        </tr>
+        </thead>
+        <tbody>
+            {{#if searchType}}
+                {{#each searchArticle}}
+                    <tr>
+                    <th scope="row">{{sum @index 1}}</th>
+                    <td>{{this.name}}</td>
+                    <td>{{this.lastUpdate}}</td>
+                    <td><img src="{{this.thumbnail}}" alt="Banner Image"></td>
+                    <td>
+                        <a href="/banner/{{this._id}}/edit"><i class="bi bi-pencil-square"></i></a>
+                        <a href="#" class="delete-banner" data-id="{{this._id}}" data-bs-toggle="modal" data-bs-target="#delete-banner-model"><i class="bi bi-trash"></i></a>
+                    </td>
+                    </tr>
+                {{/each}}
+            {{else}}
+                {{#each formatBanner}}
+                    <tr>
+                        <th scope="row">{{sum @index 1}}</th>
+                        <td class="col-3">
+                          {{this.name}}
+                        </td>
+                        <td class="col-3">
+                          {{this.dateFormat}}
+                        </td>
+                        <td class="col-3">
+                          <img src="{{this.thumbnail}}" alt="Banner Image">
+                        </td>
+                        <td class="col-2">
+                            <a href="/banner/{{this._id}}/edit" style="margin-right: 10px;">
+                              <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a href="#" class="delete-banner" data-id="{{this._id}}" data-bs-toggle="modal" data-bs-target="#delete-banner-model">
+                              <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {{/each}}
+            {{/if}}                                         
+        </tbody>
+    </table>
+    <div class="page_bar is-center">
+        {{#if (gt currentPage 1)}}
+        <button class="next previous">
+            <a href="?page={{subtract currentPage 1}}" style="color:#292828;">
+                <i class="bi bi-chevron-left"></i>
+                Previous
+            </a>
+        </button>
+        {{/if}}
+        {{#each (range 1 totalPage)}}
+        {{#if (eq this ../currentPage)}}
+            <button class="number_page active">
+            <a href="?page={{this}}">{{this}}</a>
+            </button>
+        {{else}}
+            <button class="number_page">
+            <a style="color:#292828;" href="?page={{this}}">{{this}}</a>
+            </button>
+        {{/if}}
+        {{/each}}
+        {{#if (gt currentPage 1)}}
+        <button class="next previous">
+            <a href="?page={{add currentPage 1}}" style="color:#292828;">
+                Next
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        </button>
+        {{/if}}
+    </div>
+</div>
+
+{{!-- Delete Modal --}}
+<div class="modal fade" id="delete-banner-model" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteBannerLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteBannerLabel">Delete Banner</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this banner?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="btn-delete">Delete</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form method="POST" name="delete-banner-form"></form>
+
+{{!-- Script for Delete --}}
+<script>
+  const deleteBannerModel = document.getElementById('delete-banner-model');
+  const btnDelete = document.getElementById('btn-delete');
+  const deleteForm = document.forms['delete-banner-form'];
+
+  let bannerId;
+  if (deleteBannerModel) {
+    deleteBannerModel.addEventListener('show.bs.modal', event => {
+      const button = event.relatedTarget;
+      bannerId = button.getAttribute('data-id');
+    });
+  }
+
+  if (btnDelete) {
+    btnDelete.addEventListener('click', () => {
+      deleteForm.action = '/banner/' + bannerId + '?_method=DELETE';
+      deleteForm.submit();
+    });
+  }
+</script>

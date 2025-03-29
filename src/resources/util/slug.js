@@ -1,6 +1,9 @@
 const removeDiacritics = require('remove-diacritics');
 module.exports = {
     createSlug: (text) => {
+        if (typeof text !== "string") {
+            throw new Error("Tên không hợp lệ, cần truyền vào một chuỗi.");
+        }
         // Loại bỏ dấu phụ và chuyển đổi thành chữ thường
         const cleanedText = removeDiacritics(text).toLowerCase();
 
