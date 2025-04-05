@@ -217,6 +217,19 @@ class apiGlobal {
             res.status(500).json(error)
         }
     }
+
+    /** [GET] /api/songs/getall */
+    async getAllSongs(req, res, next) {
+        try{
+            const songs = await Songs.find()
+            res.status(200).json({
+                songs
+            })
+        }catch(error){
+            console.log(error);
+            res.status(500).json(error)
+        }
+    }
 }
 
 module.exports = new apiGlobal();

@@ -5,6 +5,7 @@ const apiGlobalController = require('../app/api/apiGlobal');
 const authenController = require('../app/api/authen.api');
 const MiddlewareController = require('../app/controller/middleware.controller');
 
+route.get('/songs/getall', apiGlobalController.getAllSongs);
 route.get('/singer/:slug', apiGlobalController.getSingerDetail);
 route.get('/mv/:slug', apiGlobalController.getMvDetail);
 route.get('/bxh', apiGlobalController.getBXH);
