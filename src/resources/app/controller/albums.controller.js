@@ -97,11 +97,20 @@ class AlbumsController {
     }
 
     /* [PUT] /albums/:id */
-    updateAlbums(req, res, next) {
-        Albums.updateOne({ _id: req.params.id }, req.body)
-            .then(() => res.redirect('/albums'))
-            .catch(next);
+    async updateAlbums(req, res, next) {
+        try {
+            if (req.body.name) {
+                req.body.slug = createSlug(req.body.name);
+            }
+            
+            await Albums.updateOne({ _id: req.params.id }, req.body);
+            res.redirect('/albums');
+        } catch (error) {
+            console.log(error);
+            next(error);
+        }
     }
+    
 
     /* [DELETE] /albums/:id/delete */
     destroyAlbums(req, res, next) {

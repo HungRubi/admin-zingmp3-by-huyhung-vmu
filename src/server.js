@@ -5,6 +5,7 @@ const db = require('./config/db/index');
 const route = require('./resources/router/index.route');
 const methodOverride = require('method-override');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const port = 3000;
 const app = express();
@@ -44,7 +45,11 @@ app.use(
     }),
 );
 
-app.use(cors());
+app.use(cors({
+    origin: ["http://localhost:3001", "http://localhost:5173", "http://localhost:5174"],
+    credentials: true
+}));
+app.use(cookieParser());
 db.connect();
 route(app);
 

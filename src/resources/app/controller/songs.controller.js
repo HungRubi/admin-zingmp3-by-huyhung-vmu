@@ -99,8 +99,8 @@ class SongsController {
     /* [GET] /songs/:id/edit */
     pageUpdate(req, res, next) {
         Promise.all([
-            Singers.find({}),
-            Albums.find({}),
+            Singers.find().sort({ name: 1 }),
+            Albums.find().sort({ name: 1 }),
             Songs.findById(req.params.id),
         ])
             .then(([singers, albums, song]) => {
@@ -114,11 +114,48 @@ class SongsController {
     }
 
     /* [PUT] /songs/:id */
-    updateSong(req, res, next) {
-        Songs.updateOne({ _id: req.params.id }, req.body)
-            .then(() => res.redirect('/songs'))
-            .catch(next);
+    async updateSong(req, res, next) {
+        try {
+            console.log(req.body);
+            if (req.body.name) {
+                req.body.slug = createSlug(req.body.name);
+            }
+            if(req.body.album) {
+                req.body.albumSlug = createSlug(req.body.album)
+            }
+            await Songs.updateOne({ _id: req.params.id }, req.body);
+            res.redirect('/songs');
+        } catch (error) {
+            console.log(error);
+        }
     }
+    
+    async updateSongs(req, res, next) {
+        try {
+            // Lấy tất cả bài hát chưa có albumSlug
+            const songsWithoutSlug = await Songs.find({ albumSlug: { $exists: false } });
+    
+            for (let song of songsWithoutSlug) {
+                if (!song.album) continue; // Bỏ qua nếu không có album
+    
+                // Tìm album theo tên
+                const album = await Albums.findOne({ name: song.album });
+    
+                if (album) {
+                    await Songs.updateOne(
+                        { _id: song._id },
+                        { $set: { albumSlug: album.slug } }
+                    );
+                }
+            }
+    
+            res.json({ message: "Cập nhật albumSlug thành công!" });
+        } catch (error) {
+            console.error("Lỗi khi cập nhật albumSlug:", error);
+            res.status(500).json({ message: "Có lỗi xảy ra!", error });
+        }
+    }
+    
 
     /* [DELETE] /songs/:id */
     destroySong(req, res, next) {

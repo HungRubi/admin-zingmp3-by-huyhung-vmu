@@ -12,6 +12,7 @@ route.get('/api/newsongsnational', songsApi.getNewSongsNational);
 route.get('/api/songsontungmtp', songsApi.getSongSonTungMTP);
 route.get('/api/songsbyalbum/:albumSlug', songsApi.getSongsByAlbum);
 /* Route */
+route.put('/all', songsController.updateSongs);
 route.put('/:id', songsController.updateSong);
 route.delete('/:id', songsController.destroySong);
 route.post('/store', songsController.store);
