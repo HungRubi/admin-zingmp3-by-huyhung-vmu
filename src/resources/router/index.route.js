@@ -8,9 +8,16 @@ const partnorRoute = require('../router/partnor.route');
 const mvRoute = require('../router/mv.route');
 const bannerRoute = require('../router/banner.route');
 const apiGlobal = require('../router/apiGlobal.route');
+const authRoute = require('../router/auth.route');
+const MiddlewareController = require('../app/controller/middleware.controller');
 
 function route(app) {
+    // Public routes
+    app.use('/auth', authRoute);
     app.use('/api', apiGlobal);
+    
+    // Protected routes - require authentication
+    app.use(MiddlewareController.checkAuth);
     app.use('/songs', songsRoute);
     app.use('/banner', bannerRoute);
     app.use('/mv', mvRoute);

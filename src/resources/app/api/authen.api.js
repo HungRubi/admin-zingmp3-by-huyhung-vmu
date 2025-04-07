@@ -1,6 +1,7 @@
 const User = require('../model/user.model');
 const Albums = require('../model/albums.model');
 const Songs = require('../model/songs.model');
+const Singer = require('../model/singers.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const dotenv = require("dotenv");
@@ -15,7 +16,15 @@ class Authen {
             console.log(req.body);
             const user = await User.findOne({username: req.body.username});
             if(!user){
-                return res.status(404).json("Incorrect username")
+                // Check if the request is from a form submission
+                if (req.headers['content-type'] && req.headers['content-type'].includes('application/x-www-form-urlencoded')) {
+                    // Render the login page with error message
+                    return res.render('auth/login', { 
+                        error: 'Incorrect username or password',
+                        layout: false
+                    });
+                }
+                return res.status(404).json("Incorrect username");
             }
             if (!user.password.startsWith("$2b$")) {
                 const hashedPassword = await bcrypt.hash(user.password, 10);
@@ -27,7 +36,15 @@ class Authen {
                 user.password
             )
             if(!validedPass){
-                return res.status(404).json("Incorrect password")
+                // Check if the request is from a form submission
+                if (req.headers['content-type'] && req.headers['content-type'].includes('application/x-www-form-urlencoded')) {
+                    // Render the login page with error message
+                    return res.render('auth/login', { 
+                        error: 'Incorrect username or password',
+                        layout: false
+                    });
+                }
+                return res.status(404).json("Incorrect password");
             }
             if(user && validedPass){
                 const accessToken = jwt.sign(
@@ -53,30 +70,55 @@ class Authen {
                     path: "/" ,
                     sameSite: "strict",
                 })
+                res.cookie("token", accessToken, {
+                    httpOnly: true,
+                    secure: false,
+                    path: "/" ,
+                    sameSite: "strict",
+                })
                 await User.updateOne({ _id: user._id }, { lastLogin: new Date() });
                 const { password, ...userWithoutPassword } = user.toObject();
                 const albumIds = user.favoriteAlbums || [];
                 const songIds = user.favoriteSongs || [];
+                const singerId = user.favoriteSingers || [];
 
-                const [albums, songs] = await Promise.all([
+                const [albums, songs, singers] = await Promise.all([
                     Albums.find({ _id: { $in: albumIds } }), 
-                    Songs.find({ _id: { $in: songIds } })    
+                    Songs.find({ _id: { $in: songIds } }),    
+                    Singer.find({ _id: { $in: singerId } }),    
                 ]);
                 const formatUser = {
                     ...userWithoutPassword,
                     format: formatDate(user.birth)
                 }
+                
+                // Check if the request is from a form submission
+                if (req.headers['content-type'] && req.headers['content-type'].includes('application/x-www-form-urlencoded')) {
+                    // Redirect to home page for form submissions
+                    return res.redirect('/');
+                }
+                
+                // Return JSON for API requests
                 res.status(200).json({
                     message: "Login successful",
                     user: formatUser,
                     favoriteAlbums: albums,
                     favoriteSongs: songs,
+                    favoriteSingers: singers,
                     accessToken,
                 })
             }
-        }catch(error){
-            console.log(error)
-            res.status(500).json(error)
+        } catch (error) {
+            console.log(error);
+            // Check if the request is from a form submission
+            if (req.headers['content-type'] && req.headers['content-type'].includes('application/x-www-form-urlencoded')) {
+                // Render the login page with error message
+                return res.render('auth/login', { 
+                    error: 'An error occurred during login. Please try again.',
+                    layout: false
+                });
+            }
+            res.status(500).json(error);
         }
     }
 

@@ -24,6 +24,30 @@ class MiddlewareController {
         });
     }
     
+    // Check if user is authenticated for web routes
+    checkAuth(req, res, next) {
+        // Skip auth check for login page, login action, and logout
+        if (req.path === '/api/authen/login' || 
+            (req.path === '/api/authen/login' && req.method === 'POST') ||
+            req.path === '/api/authen/logout') {
+            return next();
+        }
+        
+        const token = req.cookies.token;
+        
+        if (!token) {
+            return res.redirect('/api/authen/login');
+        }
+        
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_ACCESS_KEY);
+            req.user = decoded;
+            next();
+        } catch (err) {
+            res.clearCookie('token');
+            return res.redirect('/api/authen/login');
+        }
+    }
 }
 
 module.exports = new MiddlewareController();

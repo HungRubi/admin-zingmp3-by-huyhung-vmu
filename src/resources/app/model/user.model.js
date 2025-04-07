@@ -12,6 +12,7 @@ const users = new Schema(
         email: { type: String, unique: true },
         favoriteSongs: [{ type: String, default: [] }],
         favoriteAlbums: [{ type: String, default: [] }],
+        favoriteSingers: [{ type: String, default: [] }],
         recentlyPlayed: [{ type: String, default: [] }],
         lastLogin: { type: Date, default: Date.now },
         loginHistory: [{ type: Date, default: Date.now }],
