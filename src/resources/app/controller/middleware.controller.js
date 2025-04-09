@@ -25,26 +25,47 @@ class MiddlewareController {
     }
     
     // Check if user is authenticated for web routes
-    checkAuth(req, res, next) {
-        // Skip auth check for login page, login action, and logout
-        if (req.path === '/api/authen/login' || 
-            (req.path === '/api/authen/login' && req.method === 'POST') ||
-            req.path === '/api/authen/logout') {
-            return next();
-        }
-        
-        const token = req.cookies.token;
-        
-        if (!token) {
-            return res.redirect('/api/authen/login');
-        }
-        
+    async checkAuth(req, res, next) {
         try {
-            const decoded = jwt.verify(token, process.env.JWT_ACCESS_KEY);
-            req.user = decoded;
-            next();
-        } catch (err) {
-            res.clearCookie('token');
+            const token = req.cookies.token;
+            const refreshToken = req.cookies.refreshToken;
+
+            // Skip auth check for login page, login action, and logout
+            if (req.path === '/api/authen/login' || 
+                (req.path === '/authen/login' && req.method === 'POST') ||
+                req.path === '/api/authen/logout') {
+                return next();
+            }
+
+            if (!token) {
+                return res.redirect('/api/authen/login');
+            }
+
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_ACCESS_KEY);
+                const user = await User.findById(decoded.id);
+                if (!user) {
+                    return res.redirect('/api/authen/login');
+                }
+                // Store user info in res.locals
+                res.locals.user = {
+                    _id: user._id,
+                    username: user.username,
+                    fullname: user.fullname,
+                    email: user.email,
+                    quyenhan: user.quyenhan,
+                    img: user.img || '/img/user/user.jpg' // Add default image if user.img is not set
+                };
+                next();
+            } catch (error) {
+                if (error.name === 'TokenExpiredError') {
+                    // Handle token refresh here if needed
+                    return res.redirect('/api/authen/login');
+                }
+                return res.redirect('/api/authen/login');
+            }
+        } catch (error) {
+            console.error('Auth error:', error);
             return res.redirect('/api/authen/login');
         }
     }

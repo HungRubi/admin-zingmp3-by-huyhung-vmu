@@ -30,6 +30,9 @@ route.get('/authen/logout', (req, res) => {
 });
 route.post('/authen/refresh',MiddlewareController.verifyToken,authenController.requestRefreshToken);
 route.get('/home', apiGlobalController.getHome);
+route.get('/', (req, res) => {
+    res.render('home', { user: res.locals.user });
+});
 route.get('/authen/login', (req, res) => {
     // Render the login page
     res.render('auth/login', { 

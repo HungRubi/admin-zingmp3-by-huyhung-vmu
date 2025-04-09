@@ -29,14 +29,14 @@
         <div class="btn-circle switch-theme" title="Switch Theme"><i class="bi bi-sun"></i></div>
         <div class="btn-circle"><i class="bi bi-bell"></i></div>
         <div class="btn-circle"><i class="bi bi-three-dots"></i></div>
-        <div class="user-avatar btn-circle btn-tab-js">
+        <div class="user-avatar btn-circle btn-tab-js" style="background-image: url({{#if user}}{{user.img}}{{else}}/img/user/user.jpg{{/if}})">
           <div class="content-user tab-js hidden">
             <div class="header-user">
               <div class="infor-user center">
-                <img src="/img/user/user.jpg" alt="">
+                <img src="{{#if user}}{{user.img}}{{else}}/img/user/user.jpg{{/if}}" alt="">
               </div>
               <div class="infor-user center">
-                <h6 class="full-name">Nguyễn Huy Hùng</h6>
+                <h6 class="full-name">{{#if user}}{{user.fullname}}{{else}}Nguyễn Huy Hùng{{/if}}</h6>
               </div>
             </div>
             <ul class="list-item-user">
